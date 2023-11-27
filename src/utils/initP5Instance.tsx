@@ -9,4 +9,10 @@ class EnhancedP5 extends p5 {
   }
 }
 
+export function p5Wrapper(sketch: SketchType, ele: HTMLDivElement) {
+  const instance = new p5(sketch, ele);
+  enahnceP5Instance(instance);
+  return instance;
+}
+
 export default EnhancedP5;

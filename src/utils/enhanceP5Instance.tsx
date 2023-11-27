@@ -1,9 +1,9 @@
 //@ts-nocheck
-
+import spectral from "spectral.js";
+import { P5InstanceType } from "../interface";
 import p5 from "p5";
-import _ from "spectral.js";
 
-function enahnceP5Instance(exports) {
+function enahnceP5Instance(p5_instance: P5InstanceType) {
   "use strict";
 
   // =============================================================================
@@ -15,6 +15,8 @@ function enahnceP5Instance(exports) {
    * necessary assets, and a check to ensure the system is ready before any drawing
    * operation is performed.
    */
+
+  const { CLOSE, dist } = p5_instance;
 
   /**
    * Reference to the renderer or canvas object.
@@ -52,7 +54,7 @@ function enahnceP5Instance(exports) {
     // Load flowfield system
     FF.create();
     // Adjust standard brushes to match canvas size
-    globalScale(_r.width / 250); // Adjust standard brushes to match canvas
+    globalScale(p5_instance.width / 250); // Adjust standard brushes to match canvas
   }
 
   /**
@@ -104,12 +106,6 @@ function enahnceP5Instance(exports) {
    */
   const R = {
     /**
-     * The basic source of randomness, can be replaced with a deterministic alternative for testing.
-     * @returns {number} A random number between 0 and 1.
-     */
-    source: () => random(),
-
-    /**
      * Generates a random number within a specified range.
      * @param {number} [min=0] - The lower bound of the range.
      * @param {number} [max=1] - The upper bound of the range.
@@ -122,6 +118,12 @@ function enahnceP5Instance(exports) {
         return this.map(this.source(), 0, 1, e, r);
       }
     },
+
+    /**
+     * The basic source of randomness, can be replaced with a deterministic alternative for testing.
+     * @returns {number} A random number between 0 and 1.
+     */
+    source: () => p5_instance.random(),
 
     /**
      * Generates a random integer within a specified range.
@@ -224,7 +226,9 @@ function enahnceP5Instance(exports) {
      * Changes angles to degrees and between 0-360
      */
     toDegrees: (a) =>
-      (((angleMode() === "radians" ? (a * 180) / Math.PI : a) % 360) + 360) %
+      (((p5_instance.angleMode() === "radians" ? (a * 180) / Math.PI : a) %
+        360) +
+        360) %
       360,
   };
   // Perform the precalculation of trigonometric values for the R object
@@ -401,8 +405,8 @@ function enahnceP5Instance(exports) {
     trans() {
       // Access the renderer's current model-view matrix and extract the translation components
       this.translation = [
-        _r._renderer.uMVMatrix.mat4[12],
-        _r._renderer.uMVMatrix.mat4[13],
+        p5_instance._renderer.uMVMatrix.mat4[12],
+        p5_instance._renderer.uMVMatrix.mat4[13],
       ];
       // Return the translation components as a two-element array
       return this.translation;
@@ -460,12 +464,15 @@ function enahnceP5Instance(exports) {
      */
     load() {
       // Create a buffer to be used as a mask. We use a 2D buffer for faster geometry drawing
-      this.mask = createGraphics(_r.width, _r.height);
-      this.mask.pixelDensity(_r.pixelDensity());
+      this.mask = p5_instance.createGraphics(
+        p5_instance.width,
+        p5_instance.height
+      );
+      this.mask.pixelDensity(p5_instance.pixelDensity());
       this.mask.clear();
       this.mask.noSmooth();
-      this.mask.angleMode(DEGREES);
-      exports.mask = this.mask;
+      this.mask.angleMode("degrees");
+      p5_instance.mask = this.mask;
 
       // Load the spectral.js shader code only once
       if (!Mix.loaded) {
@@ -475,21 +482,28 @@ function enahnceP5Instance(exports) {
         );
       }
       // Create the shader program from the vertex and fragment shaders
-      this.shader = _r.createShader(this.vert, this.frag);
+      this.shader = p5_instance.createShader(this.vert, this.frag);
       Mix.loaded = true;
 
       // Create a buffer for noBlend brushes
-      this.noBlend = createGraphics(_r.width, _r.height);
-      this.noBlend.pixelDensity(_r.pixelDensity());
+      this.noBlend = p5_instance.createGraphics(
+        p5_instance.width,
+        p5_instance.height
+      );
+      this.noBlend.pixelDensity(p5_instance.pixelDensity());
       this.noBlend.noSmooth();
       this.noBlend.clear();
-      this.noBlend.angleMode(DEGREES);
+      this.noBlend.angleMode("degrees");
 
       // WEBGL buffer for img brushes (image() is much quicker like this)
-      this.mask2 = createGraphics(_r.width, _r.height, WEBGL);
-      this.mask2.pixelDensity(_r.pixelDensity());
+      this.mask2 = p5_instance.createGraphics(
+        p5_instance.width,
+        p5_instance.height,
+        "webgl"
+      );
+      this.mask2.pixelDensity(p5_instance.pixelDensity());
       this.mask2.clear();
-      this.mask2.angleMode(DEGREES);
+      this.mask2.angleMode("degrees");
     },
 
     /**
@@ -511,12 +525,16 @@ function enahnceP5Instance(exports) {
      * This function forces standard-brushes to be updated into the canvas
      */
     reDraw() {
-      _r.push();
+      p5_instance.push();
       // Copy info from noBlend buffer
-      _r.translate(-Matrix.trans()[0], -Matrix.trans()[1]);
-      _r.image(Mix.noBlend, -_r.width / 2, -_r.height / 2);
+      p5_instance.translate(-Matrix.trans()[0], -Matrix.trans()[1]);
+      p5_instance.image(
+        Mix.noBlend,
+        -p5_instance.width / 2,
+        -p5_instance.height / 2
+      );
       Mix.noBlend.clear();
-      _r.pop();
+      p5_instance.pop();
     },
 
     /**
@@ -564,11 +582,15 @@ function enahnceP5Instance(exports) {
             (this.blending1 = true), (this.color1 = this.currentColor);
           else (this.blending2 = true), (this.color2 = this.currentColor);
         } else {
-          _r.push();
-          _r.translate(-Matrix.trans()[0], -Matrix.trans()[1]);
-          _r.image(this.noBlend, -_r.width / 2, -_r.height / 2);
+          p5_instance.push();
+          p5_instance.translate(-Matrix.trans()[0], -Matrix.trans()[1]);
+          p5_instance.image(
+            this.noBlend,
+            -p5_instance.width / 2,
+            -p5_instance.height / 2
+          );
           this.noBlend.clear();
-          _r.pop();
+          p5_instance.pop();
           return;
         }
       }
@@ -583,18 +605,22 @@ function enahnceP5Instance(exports) {
         _isLast ||
         !this.isCaching
       ) {
-        _r.push();
+        p5_instance.push();
         // Copy info from noBlend buffer
-        _r.translate(-Matrix.trans()[0], -Matrix.trans()[1]);
-        _r.image(this.noBlend, -_r.width / 2, -_r.height / 2);
+        p5_instance.translate(-Matrix.trans()[0], -Matrix.trans()[1]);
+        p5_instance.image(
+          this.noBlend,
+          -p5_instance.width / 2,
+          -p5_instance.height / 2
+        );
         this.noBlend.clear();
         // Use the blend shader for rendering
-        _r.shader(this.shader);
+        p5_instance.shader(this.shader);
         // Set shader uniforms
         // Color to blend
         this.shader.setUniform("addColor", this.currentColor);
         // Source canvas
-        this.shader.setUniform("source", _r._renderer);
+        this.shader.setUniform("source", p5_instance._renderer);
         // Bool to active watercolor blender vs marker blender
         this.shader.setUniform("active", _watercolor);
         // Random values for watercolor blender
@@ -603,10 +629,15 @@ function enahnceP5Instance(exports) {
         const mask = webgl_mask ? this.mask2 : this.mask;
         this.shader.setUniform("mask", mask);
         // Draw a rectangle covering the whole canvas to apply the shader
-        _r.fill(0, 0, 0, 0);
-        _r.noStroke();
-        _r.rect(-_r.width / 2, -_r.height / 2, _r.width, _r.height);
-        _r.pop();
+        p5_instance.fill(0, 0, 0, 0);
+        p5_instance.noStroke();
+        p5_instance.rect(
+          -p5_instance.width / 2,
+          -p5_instance.height / 2,
+          p5_instance.width,
+          p5_instance.height
+        );
+        p5_instance.pop();
         // Clear the mask after drawing
         mask.clear();
         // We cache the new color here
@@ -819,18 +850,18 @@ function enahnceP5Instance(exports) {
      * @returns {number} The relative step length value.
      */
     step_length() {
-      return Math.min(_r.width, _r.height) / 1000;
+      return Math.min(p5_instance.width, p5_instance.height) / 1000;
     },
 
     /**
      * Initializes the field grid and sets up the vector field's structure based on the renderer's dimensions.
      */
     create() {
-      this.R = _r.width * 0.01; // Determine the resolution of the field grid
-      this.left_x = -1 * _r.width; // Left boundary of the field
-      this.top_y = -1 * _r.height; // Top boundary of the field
-      this.num_columns = Math.round((2 * _r.width) / this.R); // Number of columns in the grid
-      this.num_rows = Math.round((2 * _r.height) / this.R); // Number of columns in the grid
+      this.R = p5_instance.width * 0.01; // Determine the resolution of the field grid
+      this.left_x = -1 * p5_instance.width; // Left boundary of the field
+      this.top_y = -1 * p5_instance.height; // Top boundary of the field
+      this.num_columns = Math.round((2 * p5_instance.width) / this.R); // Number of columns in the grid
+      this.num_rows = Math.round((2 * p5_instance.height) / this.R); // Number of columns in the grid
       this.addStandard(); // Add default vector fields
     },
 
@@ -875,7 +906,7 @@ function enahnceP5Instance(exports) {
         }
         for (let column = 0; column < FF.num_columns; column++) {
           for (let row = 0; row < FF.num_rows; row++) {
-            const noise_val = noise(
+            const noise_val = p5_instance.noise(
               column * 0.02 + t * 0.03,
               row * 0.02 + t * 0.03
             );
@@ -893,7 +924,7 @@ function enahnceP5Instance(exports) {
         const truncate = R.randInt(5, 10);
         for (let column = 0; column < FF.num_columns; column++) {
           for (let row = 0; row < FF.num_rows; row++) {
-            const noise_val = noise(column * 0.02, row * 0.02);
+            const noise_val = p5_instance.noise(column * 0.02, row * 0.02);
             const angle =
               Math.round(
                 R.map(noise_val, 0.0, 1.0, -angleRange, angleRange) / truncate
@@ -1007,8 +1038,8 @@ function enahnceP5Instance(exports) {
      * @returns {boolean} - True if the position is within bounds, false otherwise.
      */
     isInCanvas() {
-      const w = _r.width,
-        h = _r.height;
+      const w = p5_instance.width,
+        h = p5_instance.height;
       return (
         this.x >= -w - Matrix.trans()[0] &&
         this.x <= w - Matrix.trans()[0] &&
@@ -1372,7 +1403,7 @@ function enahnceP5Instance(exports) {
         this.max = max;
       }
       // Blend Mode
-      this.c = _r.color(this.c);
+      this.c = p5_instance.color(this.c);
       // Select mask buffer for blend mode
       this.mask = this.p.blend
         ? this.p.type === "image"
@@ -1386,8 +1417,8 @@ function enahnceP5Instance(exports) {
       this.p.type === "image"
         ? this.mask.translate(Matrix.translation[0], Matrix.translation[1])
         : this.mask.translate(
-            Matrix.translation[0] + _r.width / 2,
-            Matrix.translation[1] + _r.height / 2
+            Matrix.translation[0] + p5_instance.width / 2,
+            Matrix.translation[1] + p5_instance.height / 2
           );
       this.mask.rotate(-Matrix.rotation);
       this.mask.scale(Scale.current);
@@ -1540,8 +1571,8 @@ function enahnceP5Instance(exports) {
           this.position.y <= B.cr[3]
         );
       else {
-        const w = 0.55 * _r.width,
-          h = 0.55 * _r.height;
+        const w = 0.55 * p5_instance.width,
+          h = 0.55 * p5_instance.height;
         return (
           this.position.x >= -w - Matrix.trans()[0] &&
           this.position.x <= w - Matrix.trans()[0] &&
@@ -1558,7 +1589,7 @@ function enahnceP5Instance(exports) {
     drawSpray(pressure) {
       const vibration =
         this.w * this.p.vibration * pressure +
-        (this.w * randomGaussian() * this.p.vibration) / 3;
+        (this.w * p5_instance.randomGaussian() * this.p.vibration) / 3;
       const sw = this.p.weight * R.random(0.9, 1.1);
       const iterations = this.p.quality / pressure;
       for (let j = 0; j < iterations; j++) {
@@ -1618,7 +1649,7 @@ function enahnceP5Instance(exports) {
         this.p.vibration *
         (this.p.definition +
           ((1 - this.p.definition) *
-            randomGaussian() *
+            p5_instance.randomGaussian() *
             this.gauss(0.5, 0.9, 5, 0.2, 1.2)) /
             pressure);
       if (R.random(0, this.p.quality) > 0.4) {
@@ -2065,15 +2096,15 @@ function enahnceP5Instance(exports) {
    * @param {number} h - The height of the rectangle.
    * @param {boolean} [mode=CORNER] - If CENTER, the rectangle is drawn centered at (x, y).
    */
-  function drawRectangle(x, y, w, h, mode = CORNER) {
-    if (mode == CENTER) (x = x - w / 2), (y = y - h / 2);
+  function drawRectangle(x, y, w, h, mode = p5_instance.CORNER) {
+    if (mode == p5_instance.CENTER) (x = x - w / 2), (y = y - h / 2);
     if (FF.isActive) {
       _beginShape(0);
       _vertex(x, y);
       _vertex(x + w, y);
       _vertex(x + w, y + h);
       _vertex(x, y + h);
-      _endShape(CLOSE);
+      _endShape(p5_instance.CLOSE);
     } else {
       const p = new Polygon([
         [x, y],
@@ -2692,6 +2723,7 @@ function enahnceP5Instance(exports) {
       this.dir = dir;
       this.m = _m;
       this.midP = _center;
+
       this.size = p5.Vector.sub(this.midP, this.v[0]).mag();
       // This calculates the bleed direction for the initial shape, for each of the vertices.
       if (isFirst) {
@@ -2810,8 +2842,8 @@ function enahnceP5Instance(exports) {
       Mix.mask.push();
       Mix.mask.noStroke();
       Mix.mask.translate(
-        Matrix.translation[0] + _r.width / 2,
-        Matrix.translation[1] + _r.height / 2
+        Matrix.translation[0] + p5_instance.width / 2,
+        Matrix.translation[1] + p5_instance.height / 2
       );
       Mix.mask.rotate(Matrix.rotation);
       Mix.mask.scale(Scale.current);
@@ -3071,75 +3103,75 @@ function enahnceP5Instance(exports) {
    */
 
   // Config Functions
-  exports.config = configureSystem; // Configures and seeds the RNG (Random Number Generator).
-  exports.load = loadSystem; // Loads the library into the selected buffer.
-  exports.preload = preloadBrushAssets; // Preloads custom tips for the library.
-  exports.colorCache = enableCacheBlending; // Enables/disables cache color blending for improved performance
-  exports.scaleBrushes = globalScale; // Rescales all standard brushes.
+  p5_instance.config = configureSystem; // Configures and seeds the RNG (Random Number Generator).
+  p5_instance.load = loadSystem; // Loads the library into the selected buffer.
+  p5_instance.preload = preloadBrushAssets; // Preloads custom tips for the library.
+  p5_instance.colorCache = enableCacheBlending; // Enables/disables cache color blending for improved performance
+  p5_instance.scaleBrushes = globalScale; // Rescales all standard brushes.
 
   // Utility Functions
-  exports.push = _push;
-  exports.pop = _pop;
-  exports.reDraw = Mix.reDraw;
-  exports.reBlend = Mix.reBlend;
-  exports.rotate = Matrix.rotate;
-  exports.scale = Scale.update;
+  p5_instance.push = _push;
+  p5_instance.pop = _pop;
+  p5_instance.reDraw = Mix.reDraw;
+  p5_instance.reBlend = Mix.reBlend;
+  p5_instance.rotate = Matrix.rotate;
+  p5_instance.scale = Scale.update;
 
   // FLOWFIELD Management
-  exports.addField = addField; // Adds a new vector field.
-  exports.field = selectField; // Activates or selects a specific vector field.
-  exports.noField = disableField; // Disables the current vector field.
-  exports.refreshField = refreshField; // Refreshes the vector field, useful for animations.
-  exports.listFields = listFields; // Lists all the available fields.
+  p5_instance.addField = addField; // Adds a new vector field.
+  p5_instance.field = selectField; // Activates or selects a specific vector field.
+  p5_instance.noField = disableField; // Disables the current vector field.
+  p5_instance.refreshField = refreshField; // Refreshes the vector field, useful for animations.
+  p5_instance.listFields = listFields; // Lists all the available fields.
 
   // BRUSH Management
-  exports.add = B.add; // Adds a new brush definition.
-  exports.box = listOfBrushes; // Retrieves an array with existing brushes.
-  exports.set = B.set; // Sets values for all properties of a brush.
-  exports.pick = B.setBrush; // Selects a brush to use.
-  exports.clip = B.clip; // Clips brushes with a rectangle.
-  exports.noClip = B.noClip;
-  exports.point = drawTip; // Draw tip of the brush with a custom pressure
+  p5_instance.add = B.add; // Adds a new brush definition.
+  p5_instance.box = listOfBrushes; // Retrieves an array with existing brushes.
+  p5_instance.set = B.set; // Sets values for all properties of a brush.
+  p5_instance.pick = B.setBrush; // Selects a brush to use.
+  p5_instance.clip = B.clip; // Clips brushes with a rectangle.
+  p5_instance.noClip = B.noClip;
+  p5_instance.point = drawTip; // Draw tip of the brush with a custom pressure
 
   // STROKE Properties
-  exports.stroke = B.setColor; // Activates and sets the stroke color.
-  exports.strokeWeight = B.setWeight; // Sets the weight (thickness) of the stroke.
-  exports.noStroke = disableBrush; // Disables the stroke.
+  p5_instance.stroke = B.setColor; // Activates and sets the stroke color.
+  p5_instance.strokeWeight = B.setWeight; // Sets the weight (thickness) of the stroke.
+  p5_instance.noStroke = disableBrush; // Disables the stroke.
 
   // FILL Operations (affects rect, circle, and beginShape)
-  exports.fill = setFill; // Sets the fill color.
-  exports.bleed = setBleed; // Sets the bleed property for fills.
-  exports.fillTexture = setTexture; // Sets the fill texture.
-  exports.noFill = disableFill; // Disables the fill.
-  exports.fillAnimatedMode = fillAnimatedMode;
+  p5_instance.fill = setFill; // Sets the fill color.
+  p5_instance.bleed = setBleed; // Sets the bleed property for fills.
+  p5_instance.fillTexture = setTexture; // Sets the fill texture.
+  p5_instance.noFill = disableFill; // Disables the fill.
+  p5_instance.fillAnimatedMode = fillAnimatedMode;
 
   // GEOMETRY Drawing Functions
-  exports.line = B.line; // Draws a line.
-  exports.flowLine = B.flowLine; // Draws a line that follows the vector field.
-  exports.plot = B.flowShape; // Draws a shape that follows the vector field.
-  exports.rect = drawRectangle; // Draws a rectangle.
-  exports.circle = drawCircle; // Draws a circle.
-  exports.polygon = drawPolygon; // Draws a polygon.
-  exports.spline = drawSpline; // Draws a spline curve.
+  p5_instance.line = B.line; // Draws a line.
+  p5_instance.flowLine = B.flowLine; // Draws a line that follows the vector field.
+  p5_instance.plot = B.flowShape; // Draws a shape that follows the vector field.
+  p5_instance.rect = drawRectangle; // Draws a rectangle.
+  p5_instance.circle = drawCircle; // Draws a circle.
+  p5_instance.polygon = drawPolygon; // Draws a polygon.
+  p5_instance.spline = drawSpline; // Draws a spline curve.
   // Equivalent to beginShape in p5.js
-  exports.beginShape = _beginShape; // Begins recording vertices for a custom shape.
-  exports.vertex = _vertex; // Records a vertex for a custom shape.
-  exports.endShape = _endShape; // Finishes recording vertices and draws the shape.
+  p5_instance.beginShape = _beginShape; // Begins recording vertices for a custom shape.
+  p5_instance.vertex = _vertex; // Records a vertex for a custom shape.
+  p5_instance.endShape = _endShape; // Finishes recording vertices and draws the shape.
   // HandStroke - simulates a hand-drawn stroke
-  exports.beginStroke = _beginStroke; // Begins a hand-drawn stroke.
-  exports.segment = _segment; // Moves to a specified point in the hand-drawn stroke.
-  exports.endStroke = _endStroke; // Ends a hand-drawn stroke.
+  p5_instance.beginStroke = _beginStroke; // Begins a hand-drawn stroke.
+  p5_instance.segment = _segment; // Moves to a specified point in the hand-drawn stroke.
+  p5_instance.endStroke = _endStroke; // Ends a hand-drawn stroke.
 
   // HATCHING Operations
-  exports.hatchArray = H.hatch; // Function to create hatched patterns within polygons.
-  exports.hatch = hatch;
-  exports.setHatch = setHatch;
-  exports.noHatch = noHatch;
+  p5_instance.hatchArray = H.hatch; // Function to create hatched patterns within polygons.
+  p5_instance.hatch = hatch;
+  p5_instance.setHatch = setHatch;
+  p5_instance.noHatch = noHatch;
 
   // Exposed Classes
-  exports.Polygon = Polygon; // The Polygon class, used for creating and manipulating polygons.
-  exports.Plot = Plot; // The Plot class, for plotting curves.
-  exports.Position = Position; // The Position class, for managing positions on the canvas.
+  p5_instance.Polygon = Polygon; // The Polygon class, used for creating and manipulating polygons.
+  p5_instance.Plot = Plot; // The Plot class, for plotting curves.
+  p5_instance.Position = Position; // The Position class, for managing positions on the canvas.
 }
 
 export { enahnceP5Instance };
