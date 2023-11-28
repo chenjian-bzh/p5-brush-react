@@ -1,5 +1,6 @@
 import type p5 from "p5";
 import p5_class from "p5";
+import { ReactNode } from "react";
 
 export type P5Instance = p5;
 
@@ -18,3 +19,9 @@ export type P5WithBrushInstnace = P5Instance & {
 };
 
 export type SketchType = (p5: P5WithBrushInstnace) => void;
+
+export type P5BrushInstanceProps = {
+  sketch: SketchType;
+  fallback?: ReactNode;
+  children?: ReactNode;
+};

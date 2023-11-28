@@ -7,16 +7,17 @@ export default defineConfig({
   plugins: [react()],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/components/P5WithBrush.tsx"),
+      entry: path.resolve(__dirname, "src/P5WithBrush.tsx"),
       name: "ReactP5Brush",
     },
     rollupOptions: {
-      external: ["react", "react-dom"],
+      external: ["react", "react-dom", "p5"],
       output: {
-        dir: path.resolve(__dirname, "dist", "component"),
+        dir: path.resolve(__dirname, "dist"),
         globals: {
           react: "React",
           "react-dom": "ReactDom",
+          p5: "p5",
         },
       },
     },

@@ -1,13 +1,7 @@
-import React, { ReactNode, useEffect, useRef } from "react";
-import { SketchType, P5WithBrushInstnace } from "../interface";
-import { createInstance } from "../utils/createInstance";
-import removeP5Instance from "../utils/removeP5Instance";
-
-type P5BrushInstanceProps = {
-  sketch: SketchType;
-  fallback?: ReactNode;
-  children?: ReactNode;
-};
+import React, { useEffect, useRef } from "react";
+import { P5WithBrushInstnace, P5BrushInstanceProps } from "./interface";
+import { createInstance } from "./utils/createInstance";
+import removeP5Instance from "./utils/removeP5Instance";
 
 const P5BrushInstance: React.FC<P5BrushInstanceProps> = (props) => {
   const { sketch, fallback, children } = props;
