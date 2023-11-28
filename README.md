@@ -1,6 +1,6 @@
 # p5-brush-react
 
-A react component that encapsulates [p5.brush](https://github.com/acampouribe/p5.brush)
+React component that encapsulates [p5.brush](https://github.com/acampouribe/p5.brush), allows you to use p5.js and p5.brush in React app
 
 ## Install
 
