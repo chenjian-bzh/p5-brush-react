@@ -1,4 +1,4 @@
-import P5BrushInstance from "./components/P5Instance";
+import P5WithBrush from "./components/P5WithBrush";
 import { SketchType } from "./interface";
 
 const App = () => {
@@ -53,7 +53,7 @@ const App = () => {
     };
   };
 
-  return <P5BrushInstance sketch={sketch} />;
+  return <P5WithBrush sketch={sketch} />;
 };
 
 export default App;

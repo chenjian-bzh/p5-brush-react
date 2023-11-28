@@ -1,11 +1,13 @@
 import type p5 from "p5";
 import p5_class from "p5";
 
-export type P5InstanceType = p5;
+export type P5Instance = p5;
 
-export type EnhancedP5ConstructorProps = ConstructorParameters<typeof p5_class>;
+export type P5WithBrushConstructorProps = ConstructorParameters<
+  typeof p5_class
+>;
 
-export type EnhancedP5InstnaceType = P5InstanceType & {
+export type P5WithBrushInstnace = P5Instance & {
   brush: {
     flowLine: (x: number, y: number, length: number, dir: number) => void;
     scaleBrushes: (_scale: number) => void;
@@ -15,4 +17,4 @@ export type EnhancedP5InstnaceType = P5InstanceType & {
   };
 };
 
-export type SketchType = (p5: EnhancedP5InstnaceType) => void;
+export type SketchType = (p5: P5WithBrushInstnace) => void;

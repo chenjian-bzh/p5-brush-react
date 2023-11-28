@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useRef } from "react";
-import { SketchType, P5InstanceType } from "../interface";
-import EnhancedP5, { p5Wrapper } from "../utils/initP5Instance";
+import { SketchType, P5WithBrushInstnace } from "../interface";
+import { createInstance } from "../utils/createInstance";
 import removeP5Instance from "../utils/removeP5Instance";
 
 type P5BrushInstanceProps = {
@@ -12,14 +12,13 @@ type P5BrushInstanceProps = {
 const P5BrushInstance: React.FC<P5BrushInstanceProps> = (props) => {
   const { sketch, fallback, children } = props;
   const mountRef = useRef<HTMLDivElement | null>(null);
-  const instanceRef = useRef<P5InstanceType | null>(null);
+  const instanceRef = useRef<P5WithBrushInstnace | null>(null);
 
   useEffect(() => {
     if (!mountRef.current) return;
+
     removeP5Instance(instanceRef);
-    // instanceRef.current = new EnhancedP5(sketch, mountRef.current);
-    instanceRef.current = p5Wrapper(sketch, mountRef.current);
-    console.log(instanceRef.current);
+    instanceRef.current = createInstance(sketch, mountRef.current);
   }, [sketch]);
 
   useEffect(() => {

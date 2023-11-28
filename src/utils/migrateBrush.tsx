@@ -1,9 +1,9 @@
 //@ts-nocheck
 import spectral from "spectral.js";
-import { P5InstanceType } from "../interface";
+import { P5Instance, P5EnhancedInstnace } from "../interface";
 import p5 from "p5";
 
-function enahnceP5Instance(p5_instance: P5InstanceType) {
+function migrateBrush(p5_instance: P5Instance): P5EnhancedInstnace {
   "use strict";
 
   // =============================================================================
@@ -3171,6 +3171,8 @@ function enahnceP5Instance(p5_instance: P5InstanceType) {
   p5_instance.brush.Polygon = Polygon; // The Polygon class, used for creating and manipulating polygons.
   p5_instance.brush.Plot = Plot; // The Plot class, for plotting curves.
   p5_instance.brush.Position = Position; // The Position class, for managing positions on the canvas.
+
+  return p5_instance;
 }
 
-export { enahnceP5Instance };
+export { migrateBrush };

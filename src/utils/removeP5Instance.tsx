@@ -1,8 +1,8 @@
 import { MutableRefObject } from "react";
-import { P5InstanceType } from "../interface";
+import { P5WithBrushInstnace } from "../interface";
 
 const removeP5Instance = (
-  instance: MutableRefObject<P5InstanceType | null>
+  instance: MutableRefObject<P5WithBrushInstnace | null>
 ) => {
   instance.current?.remove();
   instance.current = null;
