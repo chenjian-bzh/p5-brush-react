@@ -1,5 +1,5 @@
-import P5WithBrush from "../P5WithBrush";
-import { SketchType } from "../interface";
+import P5WithBrush from "../src/P5WithBrush";
+import { SketchType } from "../src/interface";
 
 const App = () => {
   const sketch: SketchType = (ins) => {

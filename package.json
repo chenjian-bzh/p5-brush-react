@@ -1,18 +1,30 @@
 {
   "name": "p5-brush-react",
-  "version": "1.0.0",
+  "description": "A React component that encapsulates p5.brush.js, allows you to use p5.js and p5.brush in React app",
+  "version": "1.0.1",
+  "homepage": "https://github.com/chenjian-bzh/p5-brush-react",
+  "author": {
+    "name": "chenjian-bzh",
+    "url": "https://github.com/chenjian-bzh"
+  },
   "type": "module",
   "main": "dist/p5-brush-react.umd.cjs",
   "module": "dist/p5-brush-react.js",
   "types": "dist/P5WithBrush.d.ts",
   "scripts": {
-    "dev": "vite",
+    "preview": "vite",
     "build": "vite build --config vite.config.component.ts && tsc",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings"
   },
   "files": [
     "dist/*"
+  ],
+  "keywords": [
+    "p5",
+    "p5.brush",
+    "p5 brush",
+    "react",
+    "react-component"
   ],
   "peerDependencies": {
     "react": "^18.2.0",

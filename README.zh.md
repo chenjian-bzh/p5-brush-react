@@ -1,20 +1,20 @@
 # p5-brush-react
 
-A react component that encapsulates [p5.brush](https://github.com/acampouribe/p5.brush)
+对 [p5.brush](https://github.com/acamposuribe/p5.brush) 进行封装的 react 组件。 如果你只是想使用基础的 p5.js 的能力， 可以使用 [P5-wrapper](https://github.com/P5-wrapper/react/tree/master)
 
-## Install
+## 安装
 
-When using p5-brush-react, you also need to install [p5.js](https://github.com/processing/p5.js)
+使用 p5-brush-react 要求同时安装 [p5.js](https://github.com/processing/p5.js)
 
 ```jsx
 yarn install p5-brush-react p5
 ```
 
-## Example
+## 示例
 
-Example code in the warehouse [examples](https://github.com/chenjian-bzh/p5-brush-react/src/examples)
+仓库中的实例代码 [examples](https://github.com/chenjian-bzh/p5-brush-react/examples)
 
-You can also clone the repository locally and run the example
+也可以克隆仓库到本地，运行示例
 
 ```shell
 git clone https://github.com/chenjian-bzh/p5-brush-react.git
@@ -23,7 +23,7 @@ yarn install
 yarn preview
 ```
 
-## use
+## 使用
 
 ```jsx
 import React from "react";
