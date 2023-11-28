@@ -14,32 +14,42 @@ const App = () => {
 
     ins.setup = () => {
       ins.background("black");
-      ins.createCanvas(300, 300);
-      // ins.angleMode("degrees");
-      // ins.scaleBrushes(1.5);
-      // ins.field("seabed");
+      ins.createCanvas(1500, 1500, "webgl");
+      ins.angleMode("degrees");
+      ins.brush.scaleBrushes(1.5);
+      ins.brush.field("seabed");
     };
 
     ins.draw = () => {
-      // ins.frameRate(20);
-      ins.rect(20, 20, 30, 60);
+      const { width, height } = ins;
+      const random = ins.random.bind(ins);
 
-      // ins.translate(-width / 2, -height / 2);
+      ins.frameRate(30);
+      ins.translate(-width / 2, -height / 2);
 
-      // // brush.box() returns an array with available brushes
-      // const available_brushes = ins.box();
+      // brush.box() returns an array with available brushes
+      const available_brushes = ins.brush.box();
 
-      // // Set the stroke to a random brush, color, and weight = 1
-      // // You set a brush like this: brush.set(name_brush, color, weight)
-      // ins.set(ins.random(available_brushes), ins.random(palette), 1);
+      ins.brush.set(random(available_brushes), random(palette), 1);
 
-      // // Draw a random flowLine (x, y, length, direction)
-      // ins.flowLine(
-      //   ins.random(1500),
-      //   ins.random(1500),
-      //   ins.random(300, 800),
-      //   ins.random(0, 360)
-      // );
+      // Draw a random flowLine (x, y, length, direction)
+      ins.brush.flowLine(
+        random(width),
+        random(height),
+        random(300, 800),
+        random(0, 360)
+      );
+
+      // Set the stroke to a random brush, color, and weight = 1
+      ins.brush.set(random(available_brushes), random(palette), 1);
+
+      // Draw a random flowLine (x, y, length, direction)
+      ins.brush.flowLine(
+        random(width),
+        random(height),
+        random(300, 800),
+        random(0, 360)
+      );
     };
   };
 

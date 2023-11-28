@@ -6,9 +6,13 @@ export type P5InstanceType = p5;
 export type EnhancedP5ConstructorProps = ConstructorParameters<typeof p5_class>;
 
 export type EnhancedP5InstnaceType = P5InstanceType & {
-  flowLine: (x: number, y: number, length: number, dir: number) => void;
-  scaleBrushes: (_scale: number) => void;
-  field: (a: string) => void;
+  brush: {
+    flowLine: (x: number, y: number, length: number, dir: number) => void;
+    scaleBrushes: (_scale: number) => void;
+    field: (a: string) => void;
+    box: () => unknown[];
+    set: (brushName: string, color: string | p5.Color, weight: number) => void;
+  };
 };
 
 export type SketchType = (p5: EnhancedP5InstnaceType) => void;

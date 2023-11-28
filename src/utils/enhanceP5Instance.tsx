@@ -3103,75 +3103,74 @@ function enahnceP5Instance(p5_instance: P5InstanceType) {
    */
 
   // Config Functions
-  p5_instance.config = configureSystem; // Configures and seeds the RNG (Random Number Generator).
-  p5_instance.load = loadSystem; // Loads the library into the selected buffer.
-  p5_instance.preload = preloadBrushAssets; // Preloads custom tips for the library.
-  p5_instance.colorCache = enableCacheBlending; // Enables/disables cache color blending for improved performance
-  p5_instance.scaleBrushes = globalScale; // Rescales all standard brushes.
+  p5_instance.brush = {};
 
-  // Utility Functions
-  p5_instance.push = _push;
-  p5_instance.pop = _pop;
-  p5_instance.reDraw = Mix.reDraw;
-  p5_instance.reBlend = Mix.reBlend;
-  p5_instance.rotate = Matrix.rotate;
-  p5_instance.scale = Scale.update;
+  p5_instance.brush.config = configureSystem; // Configures and seeds the RNG (Random Number Generator).
+  p5_instance.brush.load = loadSystem; // Loads the library into the selected buffer.
+  p5_instance.brush.preload = preloadBrushAssets; // Preloads custom tips for the library.
+  p5_instance.brush.colorCache = enableCacheBlending; // Enables/disables cache color blending for improved performance
+  p5_instance.brush.scaleBrushes = globalScale; // Rescales all standard brushes.
+  // Utility Fbrush.unctions
+  p5_instance.brush.push = _push;
+  p5_instance.brush.pop = _pop;
+  p5_instance.brush.reDraw = Mix.reDraw;
+  p5_instance.brush.reBlend = Mix.reBlend;
+  p5_instance.brush.rotate = Matrix.rotate;
+  p5_instance.brush.scale = Scale.update;
+  // FLOWFIELDbrush. Management
+  p5_instance.brush.addField = addField; // Adds a new vector field.
+  p5_instance.brush.field = selectField; // Activates or selects a specific vector field.
+  p5_instance.brush.noField = disableField; // Disables the current vector field.
+  p5_instance.brush.refreshField = refreshField; // Refreshes the vector field, useful for animations.
+  p5_instance.brush.listFields = listFields; // Lists all the available fields.
+  // BRUSH Manbrush.agement
+  p5_instance.brush.add = B.add; // Adds a new brush definition.
+  p5_instance.brush.box = listOfBrushes; // Retrieves an array with existing brushes.
+  p5_instance.brush.set = B.set; // Sets values for all properties of a brush.
+  p5_instance.brush.pick = B.setBrush; // Selects a brush to use.
+  p5_instance.brush.clip = B.clip; // Clips brushes with a rectangle.
+  p5_instance.brush.noClip = B.noClip;
+  p5_instance.brush.point = drawTip; // Draw tip of the brush with a custom pressure
 
-  // FLOWFIELD Management
-  p5_instance.addField = addField; // Adds a new vector field.
-  p5_instance.field = selectField; // Activates or selects a specific vector field.
-  p5_instance.noField = disableField; // Disables the current vector field.
-  p5_instance.refreshField = refreshField; // Refreshes the vector field, useful for animations.
-  p5_instance.listFields = listFields; // Lists all the available fields.
+  // STROKE Prbrush.operties
+  p5_instance.brush.stroke = B.setColor; // Activates and sets the stroke color.
+  p5_instance.brush.strokeWeight = B.setWeight; // Sets the weight (thickness) of the stroke.
+  p5_instance.brush.noStroke = disableBrush; // Disables the stroke.
 
-  // BRUSH Management
-  p5_instance.add = B.add; // Adds a new brush definition.
-  p5_instance.box = listOfBrushes; // Retrieves an array with existing brushes.
-  p5_instance.set = B.set; // Sets values for all properties of a brush.
-  p5_instance.pick = B.setBrush; // Selects a brush to use.
-  p5_instance.clip = B.clip; // Clips brushes with a rectangle.
-  p5_instance.noClip = B.noClip;
-  p5_instance.point = drawTip; // Draw tip of the brush with a custom pressure
+  // FILL Operbrush.ations (affects rect, circle, and beginShape)
+  p5_instance.brush.fill = setFill; // Sets the fill color.
+  p5_instance.brush.bleed = setBleed; // Sets the bleed property for fills.
+  p5_instance.brush.fillTexture = setTexture; // Sets the fill texture.
+  p5_instance.brush.noFill = disableFill; // Disables the fill.
+  p5_instance.brush.fillAnimatedMode = fillAnimatedMode;
 
-  // STROKE Properties
-  p5_instance.stroke = B.setColor; // Activates and sets the stroke color.
-  p5_instance.strokeWeight = B.setWeight; // Sets the weight (thickness) of the stroke.
-  p5_instance.noStroke = disableBrush; // Disables the stroke.
+  // GEOMETRY brush.Drawing Functions
+  p5_instance.brush.line = B.line; // Draws a line.
+  p5_instance.brush.flowLine = B.flowLine; // Draws a line that follows the vector field.
+  p5_instance.brush.plot = B.flowShape; // Draws a shape that follows the vector field.
+  p5_instance.brush.rect = drawRectangle; // Draws a rectangle.
+  p5_instance.brush.circle = drawCircle; // Draws a circle.
+  p5_instance.brush.polygon = drawPolygon; // Draws a polygon.
+  p5_instance.brush.spline = drawSpline; // Draws a spline curve.
+  // Equivalenbrush.t to beginShape in p5.js
+  p5_instance.brush.beginShape = _beginShape; // Begins recording vertices for a custom shape.
+  p5_instance.brush.vertex = _vertex; // Records a vertex for a custom shape.
+  p5_instance.brush.endShape = _endShape; // Finishes recording vertices and draws the shape.
+  // HandStrokbrush.e - simulates a hand-drawn stroke
+  p5_instance.brush.beginStroke = _beginStroke; // Begins a hand-drawn stroke.
+  p5_instance.brush.segment = _segment; // Moves to a specified point in the hand-drawn stroke.
+  p5_instance.brush.endStroke = _endStroke; // Ends a hand-drawn stroke.
 
-  // FILL Operations (affects rect, circle, and beginShape)
-  p5_instance.fill = setFill; // Sets the fill color.
-  p5_instance.bleed = setBleed; // Sets the bleed property for fills.
-  p5_instance.fillTexture = setTexture; // Sets the fill texture.
-  p5_instance.noFill = disableFill; // Disables the fill.
-  p5_instance.fillAnimatedMode = fillAnimatedMode;
+  // HATCHING brush.Operations
+  p5_instance.brush.hatchArray = H.hatch; // Function to create hatched patterns within polygons.
+  p5_instance.brush.hatch = hatch;
+  p5_instance.brush.setHatch = setHatch;
+  p5_instance.brush.noHatch = noHatch;
 
-  // GEOMETRY Drawing Functions
-  p5_instance.line = B.line; // Draws a line.
-  p5_instance.flowLine = B.flowLine; // Draws a line that follows the vector field.
-  p5_instance.plot = B.flowShape; // Draws a shape that follows the vector field.
-  p5_instance.rect = drawRectangle; // Draws a rectangle.
-  p5_instance.circle = drawCircle; // Draws a circle.
-  p5_instance.polygon = drawPolygon; // Draws a polygon.
-  p5_instance.spline = drawSpline; // Draws a spline curve.
-  // Equivalent to beginShape in p5.js
-  p5_instance.beginShape = _beginShape; // Begins recording vertices for a custom shape.
-  p5_instance.vertex = _vertex; // Records a vertex for a custom shape.
-  p5_instance.endShape = _endShape; // Finishes recording vertices and draws the shape.
-  // HandStroke - simulates a hand-drawn stroke
-  p5_instance.beginStroke = _beginStroke; // Begins a hand-drawn stroke.
-  p5_instance.segment = _segment; // Moves to a specified point in the hand-drawn stroke.
-  p5_instance.endStroke = _endStroke; // Ends a hand-drawn stroke.
-
-  // HATCHING Operations
-  p5_instance.hatchArray = H.hatch; // Function to create hatched patterns within polygons.
-  p5_instance.hatch = hatch;
-  p5_instance.setHatch = setHatch;
-  p5_instance.noHatch = noHatch;
-
-  // Exposed Classes
-  p5_instance.Polygon = Polygon; // The Polygon class, used for creating and manipulating polygons.
-  p5_instance.Plot = Plot; // The Plot class, for plotting curves.
-  p5_instance.Position = Position; // The Position class, for managing positions on the canvas.
+  // Exposed Cbrush.lasses
+  p5_instance.brush.Polygon = Polygon; // The Polygon class, used for creating and manipulating polygons.
+  p5_instance.brush.Plot = Plot; // The Plot class, for plotting curves.
+  p5_instance.brush.Position = Position; // The Position class, for managing positions on the canvas.
 }
 
 export { enahnceP5Instance };
